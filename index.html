@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>在线画图板</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="toolbar">
+        <button id="undo">撤销</button>
+        <button id="redo">重做</button>
+        <div class="options">
+            <label for="range">画笔粗细</label>
+            <input type="range" value="5" min="1" max="50" id="range" />
+        </div>
+        <button id="clear">清空画布</button>
+        <button id="save">保存画布</button>
+    </div>
+    <div class="left-panel">
+        <div class="color-picker">
+            <div class="color-option" style="background-color: black;" data-color="#000000"></div>
+            <div class="color-option" style="background-color: blue;" data-color="#0000FF"></div>
+            <div class="color-option" style="background-color: red;" data-color="#FF0000"></div>
+            <input type="color" id="color" />
+        </div>
+        <button id="eraser">橡皮擦</button>
+    </div>
+    <canvas id="canvas" width="1000" height="500"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
