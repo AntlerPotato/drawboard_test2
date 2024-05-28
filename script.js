@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const enableTouchButton = document.getElementById('enableTouch');
     const enablePenButton = document.getElementById('enablePen');
 
-// 设置标志位，用于判断是否启用手指触摸或电容笔
-    let enableTouch = false;
-    let enablePen = false;
+    // 设置标志位，默认启用手指触摸和电容笔
+    let enableTouch = true;
+    let enablePen = true;
     const range = document.getElementById('range');
     const scale = canvas.width / parseInt(getComputedStyle(canvas).width); // 缩放比例
     let currentColor = '#000000';
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.body.addEventListener('touchstart', preventBehavior, { passive: false });
 
     function startDrawing(e) {
-    // 如果用户尝试使用未启用的输入方式，则直接返回
+        // 如果用户尝试使用未启用的输入方式，则直接返回
         if ((e.touches && !enableTouch) || (e.pointerType === 'pen' && !enablePen)) return;
 
         isDrawing = true;
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function draw(e) {
-    // 如果用户尝试使用未启用的输入方式，则直接返回
+        // 如果用户尝试使用未启用的输入方式，则直接返回
         if ((e.touches && !enableTouch) || (e.pointerType === 'pen' && !enablePen)) return;
 
         if (!isDrawing) return;
