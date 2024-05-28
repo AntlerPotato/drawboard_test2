@@ -11,11 +11,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const enableTouchButton = document.getElementById('enableTouch');
     const enablePenButton = document.getElementById('enablePen');
 
-    // 设置标志位，默认启用手指触摸和电容笔
-    let enableTouch = true;
-    let enablePen = true;
+    let enableTouch = true;  // 默认启用手指触摸
+    let enablePen = true;  // 默认启用电容笔
     const range = document.getElementById('range');
-    const scale = canvas.width / parseInt(getComputedStyle(canvas).width); // 缩放比例
+    const scale = canvas.width / parseInt(getComputedStyle(canvas).width);
     let currentColor = '#000000';
     let isDrawing = false;
     let lastX = 0;
@@ -29,30 +28,28 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function preventBehavior(e) {
-        e.preventDefault(); 
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
     }
 
-    // 添加触摸事件监听，防止下拉刷新和画布外滑动
     document.body.addEventListener('touchstart', preventBehavior, { passive: false });
+    document.body.addEventListener('touchmove', preventBehavior, { passive: false });
 
     function startDrawing(e) {
-        // 如果用户尝试使用未启用的输入方式，则直接返回
         if ((e.touches && !enableTouch) || (e.pointerType === 'pen' && !enablePen)) return;
-
         isDrawing = true;
         if (e.type === 'touchstart') {
             e = e.touches[0];
         }
         lastX = (e.clientX - canvas.offsetLeft) * scale;
         lastY = (e.clientY - canvas.offsetTop) * scale;
-        context.beginPath(); // 开始新路径
+        context.beginPath();
         context.moveTo(lastX, lastY);
     }
 
     function draw(e) {
-        // 如果用户尝试使用未启用的输入方式，则直接返回
         if ((e.touches && !enableTouch) || (e.pointerType === 'pen' && !enablePen)) return;
-
         if (!isDrawing) return;
         if (e.type === 'touchmove') {
             e = e.touches[0];
@@ -69,8 +66,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function stopDrawing() {
         if (isDrawing) {
-            history.push(context.getImageData(0, 0, canvas.width, canvas.height)); // 保存历史
-            redoStack = []; // 清空重做栈
+            history.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            redoStack = [];
             updateButtonStates();
         }
         isDrawing = false;
@@ -78,12 +75,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     enableTouchButton.addEventListener('click', function() {
         enableTouch = !enableTouch;
-        this.textContent = enableTouch ? '禁用手指触摸' : '启用手指触摸';
+        this.textContent = enableTouch ? '禁止手指触摸' : '启用手指触摸';
     });
     
     enablePenButton.addEventListener('click', function() {
         enablePen = !enablePen;
-        this.textContent = enablePen ? '禁用电容笔' : '启用电容笔';
+        this.textContent = enablePen ? '禁止电容笔' : '启用电容笔';
     });
 
     canvas.addEventListener('mousedown', startDrawing);
@@ -91,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function() {
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseleave', stopDrawing);
 
-    // 添加触摸事件处理器
     canvas.addEventListener('touchstart', startDrawing);
     canvas.addEventListener('touchmove', draw);
     canvas.addEventListener('touchend', stopDrawing);
@@ -119,8 +115,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     clearButton.addEventListener('click', function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
-        history = []; // 清空历史
-        redoStack = []; // 清空重做栈
+        history = [];
+        redoStack = [];
         updateButtonStates();
     });
 
@@ -129,15 +125,12 @@ document.addEventListener("DOMContentLoaded", function() {
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         const tempContext = tempCanvas.getContext('2d');
-    
-        // 绘制白色背景
+
         tempContext.fillStyle = '#FFFFFF';
         tempContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-    
-        // 绘制原始canvas的内容
+
         tempContext.drawImage(canvas, 0, 0);
-    
-        // 保存包含白色背景的图片
+
         const dataUrl = tempCanvas.toDataURL('image/png');
         const a = document.createElement('a');
         a.href = dataUrl;
@@ -145,7 +138,6 @@ document.addEventListener("DOMContentLoaded", function() {
         a.click();
     });
 
-    // 颜色选择器逻辑
     document.querySelectorAll('.color-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.color-option').forEach(op => op.classList.remove('active'));
@@ -163,8 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // 橡皮擦逻辑
     eraser.addEventListener('click', function() {
-        currentColor = '#FFFFFF'; // 假设画布背景为白色
+        currentColor = '#FFFFFF';
     });
 });
