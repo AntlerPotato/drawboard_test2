@@ -1,4 +1,3 @@
-// script.js
 document.addEventListener("DOMContentLoaded", function() {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
@@ -10,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const saveButton = document.getElementById('save');
     const enableTouchButton = document.getElementById('enableTouch');
     const enablePenButton = document.getElementById('enablePen');
-
+    
     let enableTouch = true;  // 默认启用手指触摸
     let enablePen = true;  // 默认启用电容笔
     const range = document.getElementById('range');
@@ -28,13 +27,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function preventBehavior(e) {
-        if (e.target == canvas) {
+        if (e.target === canvas) {
             e.preventDefault();
         }
     }
 
-    document.body.addEventListener('touchstart', preventBehavior, { passive: false });
-    document.body.addEventListener('touchmove', preventBehavior, { passive: false });
+    canvas.addEventListener('touchstart', preventBehavior, { passive: false });
+    canvas.addEventListener('touchmove', preventBehavior, { passive: false });
 
     function startDrawing(e) {
         if ((e.touches && !enableTouch) || (e.pointerType === 'pen' && !enablePen)) return;
@@ -42,8 +41,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.type === 'touchstart') {
             e = e.touches[0];
         }
-        lastX = (e.clientX - canvas.offsetLeft) * scale;
-        lastY = (e.clientY - canvas.offsetTop) * scale;
+        lastX = (e.clientX - canvas.getBoundingClientRect().left) * scale;
+        lastY = (e.clientY - canvas.getBoundingClientRect().top) * scale;
         context.beginPath();
         context.moveTo(lastX, lastY);
     }
@@ -54,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.type === 'touchmove') {
             e = e.touches[0];
         }
-        const newX = (e.clientX - canvas.offsetLeft) * scale;
-        const newY = (e.clientY - canvas.offsetTop) * scale;
+        const newX = (e.clientX - canvas.getBoundingClientRect().left) * scale;
+        const newY = (e.clientY - canvas.getBoundingClientRect().top) * scale;
         context.strokeStyle = currentColor;
         context.lineWidth = range.value;
         context.lineTo(newX, newY);
@@ -77,8 +76,18 @@ document.addEventListener("DOMContentLoaded", function() {
         enableTouch = !enableTouch;
         this.textContent = enableTouch ? '禁止手指触摸' : '启用手指触摸';
     });
-    
+
+    enableTouchButton.addEventListener('touchend', function() {
+        enableTouch = !enableTouch;
+        this.textContent = enableTouch ? '禁止手指触摸' : '启用手指触摸';
+    });
+
     enablePenButton.addEventListener('click', function() {
+        enablePen = !enablePen;
+        this.textContent = enablePen ? '禁止电容笔' : '启用电容笔';
+    });
+
+    enablePenButton.addEventListener('touchend', function() {
         enablePen = !enablePen;
         this.textContent = enablePen ? '禁止电容笔' : '启用电容笔';
     });
